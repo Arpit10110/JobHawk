@@ -1,0 +1,20 @@
+{
+  "dependencies": {
+    "dotenv": "^17.0.1",
+    "express": "^5.1.0",
+    "mongoose": "^8.16.1",
+    "nodemailer": "^7.0.4",
+    "puppeteer": "^24.11.2"
+  },
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "Naukari_Jobs.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
