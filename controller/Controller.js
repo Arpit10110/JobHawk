@@ -223,14 +223,14 @@ export const SendMail = async (req, res) => {
     });
 
     console.log("Message sent:", info.messageId);
-    return res.status(200).json({
+    return res.json({
       success: true,
       message: "Email sent successfully",
     });
 
   } catch (error) {
     console.error("Error sending email:", error);
-    return res.status(500).json({
+    return res.json({
       success: false,
       message: "Internal Server Error",
       error: error.message, // Send only the message for security
