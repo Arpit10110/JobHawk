@@ -1,15 +1,7 @@
 import nodemailer from "nodemailer";
 
 // Create a test account or replace with real credentials.
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true, // true for 465, false for other ports
-  auth: {
-    user: "omagrahari55@gmail.com",
-    pass: process.env.Email_password, // Your App Password
-  },
-});
+
 
 const data = [
   {
@@ -213,6 +205,15 @@ const generateEmailHtml = (jobData) => {
 
 export const SendMail = async (req, res) => {
   try {
+    const transporter = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 465,
+      secure: true, // true for 465, false for other ports
+      auth: {
+        user: "omagrahari55@gmail.com",
+        pass: process.env.Email_password, // Your App Password
+      },
+    });
     const emailHtml = generateEmailHtml(data); // Generate HTML with your job data
 
     const info = await transporter.sendMail({
