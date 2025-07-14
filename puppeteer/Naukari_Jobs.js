@@ -1,6 +1,6 @@
 import puppeteer from "puppeteer";
 
-export const start_scraping_naukari_jobs = async () => {
+export const start_scraping_naukari_jobs = async (data) => {
   let browser = await puppeteer.launch({ 
     headless: false, 
     defaultViewport: null, 
@@ -40,8 +40,69 @@ export const start_scraping_naukari_jobs = async () => {
     await click_on_search.click();
     
     const jobSearchInput = await newTab.waitForSelector('input[placeholder="Enter keyword / designation / companies"]');
-    await jobSearchInput.type("Software Engineer", { delay: 100 });
+    // typing the job titles the data.jobtitle = ["","",""...]
+    for (let i = 0; i < data.jobtitle.length; i++) {
+      const title = data.jobtitle[i];
+      if (i === 0) {
+        await jobSearchInput.type(title, { delay: 100 });
+      } else {
+        await jobSearchInput.type(`, ${title}`, { delay: 100 });
+      }
+    }
+
+    await newTab.click('input[id="experienceDD"]'); // Click to open dropdown
+    let targetExpTitle;
+
+    if (data.exp.toLowerCase() === 'fresher') {
+        targetExpTitle = 'Fresher';
+    } else {
+        targetExpTitle = data.exp.toLowerCase();
+    }
+
+    const desiredExperienceOptionSelector = `li[title="${targetExpTitle}"]`;
+    try {
+        await newTab.waitForSelector(desiredExperienceOptionSelector, { visible: true, timeout: 5000 });
+        await newTab.click(desiredExperienceOptionSelector);
+        console.log(`Successfully selected experience: "${data.exp}"`);
+    } catch (error) {
+        console.log(`Experience option "${data.exp}" not found or not clickable:`, error.message);
+        // Handle if the option is not found
+    }
+
+
+    //  if(data.exp == "Fresher"){
+    //    await new Promise((resolve) => setTimeout(resolve, 500));
+    //    await page.keyboard.press('Enter', { delay: 100 });
+    //   }else{
+    //    // the data.exp = "3 years" so we have get the number and also change it's type to number
+    //      let exp = parseInt(data.exp[0])
+    //      for(let i=1;i<=exp;i++){
+    //        await page.keyboard.press('ArrowDown'); 
+    //        await new Promise((resolve) => setTimeout(resolve, 500));
+    //        if(i == exp){
+    //          await page.keyboard.press('Enter', { delay: 100 });
+    //        }
+    //   }
+    //  }
+
+    // adding the location
+
+    let jobLocationInput = await newTab.waitForSelector('input[placeholder="Enter location"]');
+
+    for(let i=0;i<data.joblocation.length;i++){
+      const location = data.joblocation[i];
+      if (location != "Remote"){
+        if (i === 0) {
+          await jobLocationInput.type(location, { delay: 100 });
+        } else {
+          await jobLocationInput.type(`, ${location}`, { delay: 100 });
+        }
+      }
+    }
+
     await newTab.keyboard.press('Enter', { delay: 100 });
+
+
     
     // Wait for search results to load
     await newTab.waitForSelector('#listContainer', { timeout: 10000 });
@@ -109,4 +170,10 @@ export const start_scraping_naukari_jobs = async () => {
   }
 };
 
-start_scraping_naukari_jobs();
+
+export const naukar_scraper = async (data)=>{
+  console.log("Starting Naukari job scraping...");
+  console.log(data);
+
+  start_scraping_naukari_jobs(data);
+}
