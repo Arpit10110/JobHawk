@@ -98,20 +98,9 @@ export const start_scraping_naukari_jobs = async (data) => {
     }
 
     //2. if remote and other locations are there
-    if (data.joblocation.length > 1 && data.joblocation.includes("Remote")) {
-      const remote_checkbox = await newTab.waitForSelector('label[for="chk-Remote-wfhType-"]', { visible: true, timeout: 10000 });
-      await remote_checkbox.click();
-      await new Promise((resolve) => setTimeout(resolve, 3000)); 
-      const work_from_office_checkbox = await newTab.waitForSelector('label[for="chk-Work from office-wfhType-"]', { visible: true, timeout: 10000 });
-      await work_from_office_checkbox.click();
-      await new Promise((resolve) => setTimeout(resolve, 3000)); 
-      const hybrid_checkbox = await newTab.waitForSelector('label[for="chk-Hybrid-wfhType-"]', { visible: true, timeout: 10000 });
-      await hybrid_checkbox.click();
-      await new Promise((resolve) => setTimeout(resolve, 3000)); 
-      console.log("Remote, Work from Office, and Hybrid checkboxes clicked for multiple locations including remote.");
-    }
+    // by default all the checkbox rempote, work from office and hybrid are checked
 
-    //3. if other locations are there but not remote
+    //2. if other locations are there but not remote
     if (data.joblocation.length > 1 && !data.joblocation.includes("Remote")) {
       const work_from_office_checkbox = await newTab.waitForSelector('label[for="chk-Work from office-wfhType-"]', { visible: true, timeout: 10000 });
       await work_from_office_checkbox.click();
