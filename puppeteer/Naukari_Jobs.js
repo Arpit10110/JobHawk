@@ -50,7 +50,7 @@ export const start_scraping_naukari_jobs = async (data) => {
       }
     }
 
-    await newTab.click('input[id="experienceDD"]'); // Click to open dropdown
+    await newTab.click('input[id="experienceDD"]'); 
     let targetExpTitle;
 
     if (data.exp.toLowerCase() === 'fresher') {
@@ -66,24 +66,7 @@ export const start_scraping_naukari_jobs = async (data) => {
         console.log(`Successfully selected experience: "${data.exp}"`);
     } catch (error) {
         console.log(`Experience option "${data.exp}" not found or not clickable:`, error.message);
-        // Handle if the option is not found
     }
-
-
-    //  if(data.exp == "Fresher"){
-    //    await new Promise((resolve) => setTimeout(resolve, 500));
-    //    await page.keyboard.press('Enter', { delay: 100 });
-    //   }else{
-    //    // the data.exp = "3 years" so we have get the number and also change it's type to number
-    //      let exp = parseInt(data.exp[0])
-    //      for(let i=1;i<=exp;i++){
-    //        await page.keyboard.press('ArrowDown'); 
-    //        await new Promise((resolve) => setTimeout(resolve, 500));
-    //        if(i == exp){
-    //          await page.keyboard.press('Enter', { delay: 100 });
-    //        }
-    //   }
-    //  }
 
     // adding the location
 
@@ -101,6 +84,47 @@ export const start_scraping_naukari_jobs = async (data) => {
     }
 
     await newTab.keyboard.press('Enter', { delay: 100 });
+
+    // wait unitil network is idle
+    await newTab.waitForNavigation({ waitUntil: "networkidle2" });
+    
+    // apply the filters
+
+    //1. if Only Remote is thier in job location
+    if (data.joblocation.length === 1 && data.joblocation[0] === "Remote") {
+      const remote_checkbox = await newTab.waitForSelector('label[for="chk-Remote-wfhType-"]', { visible: true, timeout: 10000 });
+      await remote_checkbox.click();
+      console.log("Remote checkbox clicked for single remote location.");
+    }
+
+    //2. if remote and other locations are there
+    if (data.joblocation.length > 1 && data.joblocation.includes("Remote")) {
+      const remote_checkbox = await newTab.waitForSelector('label[for="chk-Remote-wfhType-"]', { visible: true, timeout: 10000 });
+      await remote_checkbox.click();
+      await new Promise((resolve) => setTimeout(resolve, 3000)); 
+      const work_from_office_checkbox = await newTab.waitForSelector('label[for="chk-Work from office-wfhType-"]', { visible: true, timeout: 10000 });
+      await work_from_office_checkbox.click();
+      await new Promise((resolve) => setTimeout(resolve, 3000)); 
+      const hybrid_checkbox = await newTab.waitForSelector('label[for="chk-Hybrid-wfhType-"]', { visible: true, timeout: 10000 });
+      await hybrid_checkbox.click();
+      await new Promise((resolve) => setTimeout(resolve, 3000)); 
+      console.log("Remote, Work from Office, and Hybrid checkboxes clicked for multiple locations including remote.");
+    }
+
+    //3. if other locations are there but not remote
+    if (data.joblocation.length > 1 && !data.joblocation.includes("Remote")) {
+      const work_from_office_checkbox = await newTab.waitForSelector('label[for="chk-Work from office-wfhType-"]', { visible: true, timeout: 10000 });
+      await work_from_office_checkbox.click();
+      await new Promise((resolve) => setTimeout(resolve, 3000)); 
+      const hybrid_checkbox = await newTab.waitForSelector('label[for="chk-Hybrid-wfhType-"]',{ visible: true, timeout: 10000 });
+      await hybrid_checkbox.click();
+      await new Promise((resolve) => setTimeout(resolve, 3000)); 
+      console.log("Work from Office and Hybrid checkboxes clicked for multiple locations excluding remote.");
+    }
+
+    
+
+
 
 
     
@@ -166,7 +190,7 @@ export const start_scraping_naukari_jobs = async (data) => {
     console.error('Error during scraping:', error);
     return [];
   } finally {
-    await browser.close();
+    // await browser.close();
   }
 };
 
