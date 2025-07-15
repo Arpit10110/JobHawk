@@ -110,13 +110,17 @@ export const start_scraping_naukari_jobs = async (data) => {
       await new Promise((resolve) => setTimeout(resolve, 3000)); 
       console.log("Work from Office and Hybrid checkboxes clicked for multiple locations excluding remote.");
     }
+    await new Promise((resolve) => setTimeout(resolve, 3000)); 
 
-    
+    // sort by date
+
+    const sort_dropdown = await newTab.waitForSelector('button[id="filter-sort"]')
+    await sort_dropdown.click();
+    const sort_by_date = await newTab.waitForSelector('li[title="Date"]');
+    await sort_by_date.click();
+    await new Promise((resolve) => setTimeout(resolve, 3000)); 
 
 
-
-
-    
     // Wait for search results to load
     await newTab.waitForSelector('#listContainer', { timeout: 10000 });
     await new Promise((resolve) => setTimeout(resolve, 3000)); 
