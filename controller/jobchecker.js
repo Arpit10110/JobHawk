@@ -11,6 +11,7 @@ export const dbchecker = async () => {
     });
 
     const todays_date = new Date();
+    console.log(`Today's date: ${todays_date}`);
 
     for (const i of jobForms) {
       // Check if lastSentAt is null or not from today
@@ -26,14 +27,15 @@ export const dbchecker = async () => {
         // Check if the form's scheduled time is earlier or equal to the current time
         if (form24hr <= currentHour) {
           console.log(`Scraping job form: ${i.jobtitle} at ${formHour}:${currentMinute} ${i.ampm}`);
-          await naukar_scraper(i);
+        //   await naukar_scraper(i);
           i.lastSentAt = new Date();
           await i.save();
         }
+      }else{
+        console.log(`Skipping job id ${i._id}.`);
       }
     }
 
-    console.log("Job forms processed:", jobForms);
   } catch (error) {
     console.error("❌ Error checking the database:", error.message);
   }
