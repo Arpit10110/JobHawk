@@ -1,4 +1,5 @@
 import puppeteer from "puppeteer";
+import { SendMail } from "../controller/Controller.js";
 
 export const start_scraping_naukari_jobs = async (data) => {
   let browser = await puppeteer.launch({ 
@@ -148,13 +149,18 @@ export const start_scraping_naukari_jobs = async (data) => {
           // Extract company name
           const companyElement = jobWrapper.querySelector('a[class*="comp-name"]');
           const companyName = companyElement ? companyElement.textContent.trim() : '';
+
+          // extract job loaction class can be locWdth or locWdth2
+          const locationElement = jobWrapper.querySelector('span[class*="locWdth"]') || jobWrapper.querySelector('span[class*="locWdth2"]');
+          
           
           // Only add jobs with valid title, company name, and link
           if (title && companyName && link) {
             jobList.push({
               title,
               link,
-              companyName
+              companyName,
+              location: locationElement ? locationElement.textContent.trim() : 'Not specified'
             });
           }
         } catch (error) {
@@ -169,13 +175,25 @@ export const start_scraping_naukari_jobs = async (data) => {
     
     // Display jobs in the requested format
     if (jobs.length > 0) {
-      console.log('\nJobs found:');
-      jobs.forEach((job, index) => {
-        console.log(`${index + 1}. title: ${job.title} | link: ${job.link} | company name: ${job.companyName}`);
-      });
+      console.log('\nJobs founded');
+      // extracting number of jobnumber their from the jobs array and it should be unique
+      
+      let number_of_jobs_needed = parseInt(data.jobnumber);
+
+      const uniqueJobs = [];
+      for(let i=0;i<jobs.length;i++){
+        if(uniqueJobs.length >= number_of_jobs_needed) break;
+        const job = jobs[i];
+        if(!uniqueJobs.some(j => j.link === job.link)) {
+          uniqueJobs.push(job);
+        }
+      }
+      SendMail(data, uniqueJobs);
     } else {
       console.log('No jobs found. Check if the page loaded correctly.');
     }
+
+    console.log("Scraping completed successfully.");
     
     return jobs;
     
