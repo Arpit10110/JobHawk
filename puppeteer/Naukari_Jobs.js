@@ -57,6 +57,11 @@ async function verifyLogin(page) {
     const currentUrl = page.url();
     if (currentUrl.includes('nlogin') || currentUrl.includes('login')) {
       console.log('❌ Redirected to login page - session expired');
+      console.log(`Current URL: ${currentUrl}`);
+      // show the full page content for debugging
+      const content = await page.content();
+      // showing the full page content in console
+      console.log('Full page content:', content);
       return false;
     }
     
@@ -64,6 +69,11 @@ async function verifyLogin(page) {
     const loginForm = await page.$('#usernameField');
     if (loginForm) {
       console.log('❌ Login form detected - user is logged out');
+      console.log(`Current URL: ${currentUrl}`);
+      // show the full page content for debugging
+      const content = await page.content();
+      // showing the full page content in console
+      console.log('Full page content:', content);
       return false;
     }
     
@@ -72,6 +82,11 @@ async function verifyLogin(page) {
     
   } catch (error) {
     console.log('❌ Error verifying login:', error.message);
+    console.log(`Current URL: ${currentUrl}`);
+    // show the full page content for debugging
+    const content = await page.content();
+    // showing the full page content in console
+    console.log('Full page content:', content);
     return false;
   }
 }
@@ -96,7 +111,7 @@ async function performLogin(page) {
     ].join(',');
     
     const username = await page.waitForSelector(loginSelectors, { 
-      timeout: 90000,
+      timeout: 50000,
       visible: true 
     });
     
