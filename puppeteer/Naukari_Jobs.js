@@ -158,8 +158,7 @@ async function performLogin(page) {
     // Check current URL
     const currentUrl = page.url();
     console.log(`Current URL after login: ${currentUrl}`);
-    const gs = await page.content();
-     console.log('📄 Page content after navigation:', gs);
+    
     
     // If we're not on login page anymore, assume success
     if (!currentUrl.includes('nlogin') && !currentUrl.includes('login')) {
@@ -168,6 +167,8 @@ async function performLogin(page) {
     }
     
     console.log('✅ Login completed (staying on same page)');
+    const gs = await page.content();
+     console.log('📄 Page content after navigation:', gs);
     return true;
     
   } catch (error) {
@@ -251,6 +252,8 @@ export const start_scraping_naukari_jobs = async (data) => {
     
     // Navigate to job search
     console.log('🔍 Navigating to job search...');
+    const ss = page.url();
+    console.log(`📍 URL after navigation: ${ss}`);
     await page.goto("https://www.naukri.com/", {
       waitUntil: "domcontentloaded",
       timeout: 60000
