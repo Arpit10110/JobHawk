@@ -46,7 +46,7 @@ export const start_scraping_naukari_jobs = async (data) => {
     await page.setViewport({ width: 1440, height: 900 });
     
     // Add more robust navigation with retries
-    await page.goto("https://www.naukri.com/mnjuser/homepage", {
+    await page.goto("https://www.naukri.com/nlogin/login?URL=https://www.naukri.com/mnjuser/homepage", {
       waitUntil: ["networkidle2", "domcontentloaded"],
       timeout: 60000 // Increase timeout to 60 seconds
     });
