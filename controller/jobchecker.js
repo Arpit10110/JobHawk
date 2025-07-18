@@ -32,8 +32,8 @@ export const dbchecker = async () => {
           console.log(`Scraping job form: for jobId-${i._id} at ${formHour}:${currentMinute} ${i.ampm}`);
           // await naukar_scraper(i);
           await internshala_scraper()
-          // i.lastSentAt = new Date();
-          // await i.save();
+          i.lastSentAt = new Date();
+          await i.save();
         }else{
           console.log(`Skipping job form: ${i._id} as it is scheduled for a later time.`);
         }

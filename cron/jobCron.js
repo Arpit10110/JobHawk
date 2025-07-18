@@ -8,8 +8,8 @@ cron.schedule("*1 * * * *", async () => {
     // console.log("Checking the db to send emails");
     try {
         console.log("Cron job is running every 2 minutes");
-        // await dbchecker();
-         await internshala_scraper()
+        await dbchecker();
+        //  await internshala_scraper()
         
     } catch (error) {
         console.error("Error during cron job execution:", error);
