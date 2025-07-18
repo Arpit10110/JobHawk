@@ -230,10 +230,6 @@ export const start_scraping_naukari_jobs = async (data) => {
     await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36');
     await page.setViewport({ width: 1440, height: 900 });
 
-    // chceck the useragent used
-    const userAgent = await page.evaluate(() => navigator.userAgent);
-    console.log(`User Agent: ${userAgent}`);
-    
     // Block heavy resources
     await page.setRequestInterception(true);
     const blocked = ['googletagmanager', 'doubleclick', 'googleads', 'facebook', 'analytics'];
