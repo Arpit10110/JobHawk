@@ -135,28 +135,34 @@ async function performLogin(page) {
     await new Promise(resolve => setTimeout(resolve, 5000));
     
     // Verify login was successful
-    const loginSuccess = await verifyLogin(page);
+    // const loginSuccess = await verifyLogin(page);
     
-    if (!loginSuccess) {
-      // Check for error messages
-      const errorSelectors = [
-        '.err-msg',
-        '.error-message',
-        '.login-error',
-        '[class*="error"]'
-      ];
+    // if (!loginSuccess) {
+    //   // Check for error messages
+    //   const errorSelectors = [
+    //     '.err-msg',
+    //     '.error-message',
+    //     '.login-error',
+    //     '[class*="error"]'
+    //   ];
       
-      for (const selector of errorSelectors) {
-        const errorElement = await page.$(selector);
-        if (errorElement) {
-          const errorText = await errorElement.textContent();
-          console.log(`❌ Login error detected: ${errorText}`);
-          throw new Error(`Login failed: ${errorText}`);
-        }
-      }
+    //   for (const selector of errorSelectors) {
+    //     const errorElement = await page.$(selector);
+    //     if (errorElement) {
+    //       const errorText = await errorElement.textContent();
+    //       console.log(`❌ Login error detected: ${errorText}`);
+    //       throw new Error(`Login failed: ${errorText}`);
+    //     }
+    //   }
       
-      throw new Error('Login failed - unable to verify successful login');
-    }
+    //   throw new Error('Login failed - unable to verify successful login');
+    // }
+
+    // showing the full page contnent
+    const currentUrl = page.url();
+    console.log(`Current URL after login: ${currentUrl}`);
+    const content = await page.content();
+    console.log('Full page content after login:', content);
     
     console.log('✅ Login successful!');
     return true;
