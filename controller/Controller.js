@@ -155,7 +155,7 @@ const generateEmailHtml = (jobData) => {
 };
 
 
-export const SendMail = async (data,jobdata) => {
+export const SendMail = async (jobdata) => {
   try {
     const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
@@ -170,7 +170,7 @@ export const SendMail = async (data,jobdata) => {
 
     const info = await transporter.sendMail({
       from: 'omagrahari55@gmail.com',
-      to: data.email, // Replace with recipient email
+      to: "arpitkumaragrahari21@gmail.com", // Replace with recipient email
       subject: "Your Latest Job Opportunities! 🚀",
       html: emailHtml, // Use the generated HTML content
     });

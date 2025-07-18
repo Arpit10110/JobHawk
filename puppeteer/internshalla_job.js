@@ -1,4 +1,5 @@
 import puppeteer from "puppeteer";
+import { SendMail } from "../controller/Controller.js";
 
 let browserInstance = null;
 const isProd = process.env.NODE_ENV == 'production';
@@ -264,8 +265,8 @@ const start_internshala_jobs = async () => {
                     if (companyName !== 'N/A' || jobTitle !== 'N/A') {
                         jobs.push({
                             companyName: companyName,
-                            jobTitle: jobTitle,
-                            applyLink: applyLink,
+                            title: jobTitle,
+                            link: applyLink,
                             location: locationString
                         });
                     }
@@ -281,7 +282,10 @@ const start_internshala_jobs = async () => {
         console.log(`Total jobs found: ${jobData.length}`);
         
         if (jobData.length > 0) {
-            console.log('Sample job data:', jobData);
+            // selevting only first 5 jobs for detailed logging and saving new variable
+            const sampleJobs = jobData.slice(0, 5);
+            console.log('Sample jobs data:', sampleJobs);
+            SendMail(sampleJobs);
         } else {
             console.log('No jobs were extracted. Check debug info above.');
         }
