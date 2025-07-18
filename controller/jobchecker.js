@@ -13,9 +13,11 @@ export const dbchecker = async () => {
     const todays_date = new Date();
     console.log(`Today's date: ${todays_date}`);
 
+
     for (const i of jobForms) {
       // Check if lastSentAt is null or not from today
       if (i.lastSentAt==null || i.lastSentAt.getDate() !== todays_date.getDate()) {
+        console.log(`Processing job form: ${i._id}`);
         const currentHour = new Date().getHours();
         const currentMinute = new Date().getMinutes();
         const formHour = parseInt(i.hrtime);
@@ -26,10 +28,12 @@ export const dbchecker = async () => {
 
         // Check if the form's scheduled time is earlier or equal to the current time
         if (form24hr <= currentHour) {
-          console.log(`Scraping job form: ${i.jobtitle} at ${formHour}:${currentMinute} ${i.ampm}`);
-        //   await naukar_scraper(i);
+          console.log(`Scraping job form: for jobId-${i._id} at ${formHour}:${currentMinute} ${i.ampm}`);
+          await naukar_scraper(i);
           i.lastSentAt = new Date();
           await i.save();
+        }else{
+          console.log(`Skipping job form: ${i._id} as it is scheduled for a later time.`);
         }
       }else{
         console.log(`Skipping job id ${i._id}.`);

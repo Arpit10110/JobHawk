@@ -1,13 +1,43 @@
 import puppeteer from "puppeteer";
 import { SendMail } from "../controller/Controller.js";
 
-export const start_scraping_naukari_jobs = async (data) => {
-  let browser = await puppeteer.launch({ 
-    headless: false, 
-    defaultViewport: null, 
-    args: ['--start-maximized'] 
-  });
 
+// for production 
+let browser = null;
+const isProd = process.env.NODE_ENV === 'production';
+async function initializeBrowser() {
+  if (!browser) {
+    browser = await puppeteer.launch({
+      headless: isProd, 
+      args: isProd? [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-accelerated-2d-canvas',
+        '--no-first-run',
+        '--no-zygote',
+        '--single-process',
+        '--disable-gpu'
+      ]:['--start-maximized']
+    });
+  }
+  return browser;
+}
+
+export const start_scraping_naukari_jobs = async (data) => {
+  // this is for locally using this browser
+
+  // let browser = await puppeteer.launch({ 
+  //   headless: false, 
+  //   defaultViewport: null, 
+  //   args: ['--start-maximized'] 
+  // });
+  
+  
+  //using this browser for production
+  // to avoid launching multiple instances of browser
+  const browser = await initializeBrowser(); // Use shared browser instance 
+  // from here the code will be same for both local and production
   const page = await browser.newPage();
   await page.setViewport({ width: 1440, height: 900 });
   
@@ -201,7 +231,16 @@ export const start_scraping_naukari_jobs = async (data) => {
     console.error('Error during scraping:', error);
     return [];
   } finally {
-    // await browser.close();
+    try {
+      const pages = await browser.pages();
+      await Promise.all(pages.map(page => page.close()));
+      await browser.close();
+    } catch (closeError) {
+      console.error('Error closing browser:', closeError);
+      if (browser.process()) {
+        browser.process().kill('SIGINT');
+      }
+    }
   }
 };
 
