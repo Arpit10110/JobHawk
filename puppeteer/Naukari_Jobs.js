@@ -1,4 +1,4 @@
-import puppeteer from "puppeteer";
+import puppeteer, { executablePath } from "puppeteer";
 import { SendMail } from "../controller/Controller.js";
 
 
@@ -8,6 +8,7 @@ const isProd = process.env.NODE_ENV == 'production';
 async function initializeBrowser() {
   if (!browser) {
     browser = await puppeteer.launch({
+      executablePath:isProd?process.env.PUPPETEER_EXECUTABLE_PATH : puppeteer.executablePath(),
       headless: isProd ? "new" : false, 
       args: isProd? [
         '--no-sandbox',
