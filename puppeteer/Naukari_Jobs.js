@@ -4,7 +4,7 @@ import { SendMail } from "../controller/Controller.js";
 
 // for production 
 let browser = null;
-const isProd = process.env.NODE_ENV === 'production';
+const isProd = process.env.NODE_ENV == 'production';
 async function initializeBrowser() {
   if (!browser) {
     browser = await puppeteer.launch({
