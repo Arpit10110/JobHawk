@@ -158,6 +158,8 @@ async function performLogin(page) {
     // Check current URL
     const currentUrl = page.url();
     console.log(`Current URL after login: ${currentUrl}`);
+    const gs = await page.content();
+     console.log('📄 Page content after navigation:', gs);
     
     // If we're not on login page anymore, assume success
     if (!currentUrl.includes('nlogin') && !currentUrl.includes('login')) {
