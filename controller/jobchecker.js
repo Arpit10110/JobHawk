@@ -1,4 +1,5 @@
 import JobForm from "../model/jobform_model.js";
+import { internshala_scraper } from "../puppeteer/internshalla_job.js";
 import { naukar_scraper } from "../puppeteer/Naukari_Jobs.js";
 
 export const dbchecker = async () => {
@@ -29,9 +30,10 @@ export const dbchecker = async () => {
         // Check if the form's scheduled time is earlier or equal to the current time
         if (form24hr <= currentHour) {
           console.log(`Scraping job form: for jobId-${i._id} at ${formHour}:${currentMinute} ${i.ampm}`);
-          await naukar_scraper(i);
-          i.lastSentAt = new Date();
-          await i.save();
+          // await naukar_scraper(i);
+          await internshala_scraper()
+          // i.lastSentAt = new Date();
+          // await i.save();
         }else{
           console.log(`Skipping job form: ${i._id} as it is scheduled for a later time.`);
         }
