@@ -1,4 +1,4 @@
-import puppeteer, { executablePath } from "puppeteer";
+import puppeteer from "puppeteer";
 import { SendMail } from "../controller/Controller.js";
 
 
@@ -8,7 +8,7 @@ const isProd = process.env.NODE_ENV == 'production';
 async function initializeBrowser() {
   if (!browser) {
     browser = await puppeteer.launch({
-      executablePath:isProd?process.env.PUPPETEER_EXECUTABLE_PATH : puppeteer.executablePath(),
+      executablePath: isProd ? process.env.PUPPETEER_EXECUTABLE_PATH : undefined,
       headless: isProd ? "new" : false, 
       args: isProd? [
         '--no-sandbox',
@@ -40,15 +40,28 @@ export const start_scraping_naukari_jobs = async (data) => {
   const browser = await initializeBrowser(); // Use shared browser instance 
   // from here the code will be same for both local and production
   const page = await browser.newPage();
-  await page.setViewport({ width: 1440, height: 900 });
   
   try {
+    await page.setViewport({ width: 1440, height: 900 });
+    
+    // Add more robust navigation with retries
     await page.goto("https://www.naukri.com/mnjuser/homepage", {
-      waitUntil: "networkidle2"
+      waitUntil: ["networkidle2", "domcontentloaded"],
+      timeout: 60000 // Increase timeout to 60 seconds
     });
     
-    const username = await page.waitForSelector('#usernameField');
-    const password = await page.waitForSelector('#passwordField');
+    // Wait for page to stabilize
+    await new Promise(resolve => setTimeout(resolve, 5000));
+    
+    // Try multiple selectors and increase timeout
+    const username = await page.waitForSelector('#usernameField', { 
+      timeout: 45000,
+      visible: true 
+    });
+    const password = await page.waitForSelector('#passwordField',{
+      timeout: 45000,
+      visible: true 
+    });
 
     await username.type("xabivo8514@fuasha.com", {delay: 100});
     await password.type("Arpit@761", {delay: 100});
