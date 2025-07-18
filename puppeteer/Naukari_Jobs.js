@@ -42,6 +42,7 @@ export const start_scraping_naukari_jobs = async (data) => {
   const page = await browser.newPage();
   
   try {
+    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36');
     await page.setViewport({ width: 1440, height: 900 });
     
     // Add more robust navigation with retries
@@ -49,6 +50,18 @@ export const start_scraping_naukari_jobs = async (data) => {
       waitUntil: ["networkidle2", "domcontentloaded"],
       timeout: 60000 // Increase timeout to 60 seconds
     });
+
+    // Debug: Check what page actually loaded
+    const currentUrl = page.url();
+    const pageTitle = await page.title();
+    
+    console.log('=== PAGE DEBUG INFO ===');
+    console.log('Current URL:', currentUrl);
+    console.log('Page Title:', pageTitle);
+    
+    // Check if we're being redirected or blocked
+    const pageContent = await page.content();
+    console.log('Page content (first 500 chars):', pageContent.substring(0, 500));
     
     // Wait for page to stabilize
     await new Promise(resolve => setTimeout(resolve, 5000));
