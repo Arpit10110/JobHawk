@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 set -o errexit
 
-# Install dependencies without postinstall
+# Install dependencies and Chrome
 npm install
 
-# Install Chrome explicitly
-npx puppeteer browsers install chrome
-
-echo "Build completed successfully"
+# Explicit completion
+echo "✅ Build completed successfully"
+exit 0
