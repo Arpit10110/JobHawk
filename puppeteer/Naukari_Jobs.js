@@ -8,7 +8,7 @@ const isProd = process.env.NODE_ENV === 'production';
 async function initializeBrowser() {
   if (!browser) {
     browser = await puppeteer.launch({
-      headless: isProd, 
+      headless: isProd ? "new" : false, 
       args: isProd? [
         '--no-sandbox',
         '--disable-setuid-sandbox',
