@@ -1,24 +1,16 @@
 #!/usr/bin/env bash
 set -o errexit
 
-# Complete cleanup
+# Remove any existing node_modules and package-lock
 rm -rf node_modules package-lock.json
 
-# Install only puppeteer explicitly first
-npm install puppeteer@21.0.0
-
-# Install all other dependencies
+# Clean install of dependencies
 npm install
-
-# Verify no puppeteer-core exists
-if [ -d "node_modules/puppeteer-core" ]; then
-    echo "❌ Error: puppeteer-core still exists"
-    rm -rf node_modules/puppeteer-core
-fi
 
 # Verify puppeteer installation
 echo "Checking puppeteer installation..."
-ls -la node_modules/puppeteer/ || echo "Puppeteer directory not found"
+npm list puppeteer || echo "Puppeteer not found in npm list"
 
+# Explicit completion
 echo "✅ Build completed successfully"
 exit 0
