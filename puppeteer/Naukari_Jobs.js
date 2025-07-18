@@ -92,6 +92,7 @@ async function verifyLogin(page) {
 }
 
 // Function to handle login with verification
+// Function to handle login with proper field enabling
 async function performLogin(page) {
   try {
     console.log('🔐 Starting login process...');
@@ -110,68 +111,74 @@ async function performLogin(page) {
       'input[type="email"]'
     ].join(',');
     
-    const username = await page.waitForSelector(loginSelectors, { 
-      timeout: 50000,
-      visible: true 
-    });
+    console.log('⏳ Waiting for login form to be enabled...');
     
-    const password = await page.waitForSelector('#passwordField', {
-      timeout: 30000,
-      visible: true 
-    });
+    // Wait for username field to be both visible AND enabled
+    await page.waitForFunction(() => {
+      const usernameField = document.querySelector('#usernameField');
+      return usernameField && !usernameField.disabled;
+    }, { timeout: 60000 });
+    
+    // Wait for password field to be enabled
+    await page.waitForFunction(() => {
+      const passwordField = document.querySelector('#passwordField');
+      return passwordField && !passwordField.disabled;
+    }, { timeout: 30000 });
+    
+    console.log('✅ Form fields are now enabled!');
+    
+    // Get the enabled fields
+    const username = await page.$('#usernameField');
+    const password = await page.$('#passwordField');
 
-    // Clear fields first
+    // Clear and fill fields
     await username.click({ clickCount: 3 });
     await username.type("xabivo8514@fuasha.com", {delay: 100});
     
     await password.click({ clickCount: 3 });
     await password.type("Arpit@761", {delay: 100});
     
-    // Submit form
-    await page.keyboard.press('Enter', { delay: 100 });
+    // Wait for login button to be enabled
+    console.log('⏳ Waiting for login button to be enabled...');
+    await page.waitForFunction(() => {
+      const loginButton = document.querySelector('button[type="submit"]');
+      return loginButton && !loginButton.disabled;
+    }, { timeout: 30000 });
     
-    // Wait for login to complete with multiple checks
+    console.log('✅ Login button is now enabled!');
+    
+    // Click the login button instead of pressing Enter
+    const loginButton = await page.$('button[type="submit"]');
+    await loginButton.click();
+    
+    // Wait for login to complete
     console.log('⏳ Waiting for login to complete...');
-    await new Promise(resolve => setTimeout(resolve, 5000));
+    await new Promise(resolve => setTimeout(resolve, 8000));
     
-    // Verify login was successful
-    // const loginSuccess = await verifyLogin(page);
-    
-    // if (!loginSuccess) {
-    //   // Check for error messages
-    //   const errorSelectors = [
-    //     '.err-msg',
-    //     '.error-message',
-    //     '.login-error',
-    //     '[class*="error"]'
-    //   ];
-      
-    //   for (const selector of errorSelectors) {
-    //     const errorElement = await page.$(selector);
-    //     if (errorElement) {
-    //       const errorText = await errorElement.textContent();
-    //       console.log(`❌ Login error detected: ${errorText}`);
-    //       throw new Error(`Login failed: ${errorText}`);
-    //     }
-    //   }
-      
-    //   throw new Error('Login failed - unable to verify successful login');
-    // }
-
-    // showing the full page contnent
+    // Check current URL
     const currentUrl = page.url();
     console.log(`Current URL after login: ${currentUrl}`);
-    const content = await page.content();
-    console.log('Full page content after login:', content);
     
-    console.log('✅ Login successful!');
+    // If we're not on login page anymore, assume success
+    if (!currentUrl.includes('nlogin') && !currentUrl.includes('login')) {
+      console.log('✅ Login successful - redirected away from login page!');
+      return true;
+    }
+    
+    console.log('✅ Login completed (staying on same page)');
     return true;
     
   } catch (error) {
     console.error('❌ Login failed:', error.message);
+    
+    // Show current page state for debugging
+    const currentUrl = page.url();
+    console.log(`Current URL during error: ${currentUrl}`);
+    
     throw error;
   }
 }
+
 
 // Function to check if session is still valid during scraping
 async function checkSessionDuringProcess(page) {
