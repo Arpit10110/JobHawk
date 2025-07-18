@@ -29,7 +29,7 @@ export const dbchecker = async () => {
 
         // Check if the form's scheduled time is earlier or equal to the current time
         if (form24hr <= currentHour) {
-          console.log(`Scraping job form: for jobId-${i._id} at ${formHour}:${currentMinute} ${i.ampm}`);
+          console.log(`Scraping job form: for jobId-${i._id} at ${currentHour}:${currentMinute} ${i.ampm}`);
           // await naukar_scraper(i);
           await internshala_scraper()
           i.lastSentAt = new Date();
