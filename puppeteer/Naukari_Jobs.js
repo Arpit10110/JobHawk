@@ -226,9 +226,13 @@ export const start_scraping_naukari_jobs = async (data) => {
     browser = await initializeBrowser();
     page = await browser.newPage();
     
-    // Set user agent and viewport
+    // Set user agent only chrome and viewport
     await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36');
     await page.setViewport({ width: 1440, height: 900 });
+
+    // chceck the useragent used
+    const userAgent = await page.evaluate(() => navigator.userAgent);
+    console.log(`User Agent: ${userAgent}`);
     
     // Block heavy resources
     await page.setRequestInterception(true);
@@ -253,7 +257,9 @@ export const start_scraping_naukari_jobs = async (data) => {
     // Navigate to job search
     console.log('🔍 Navigating to job search...');
     const ss = page.url();
-    console.log(`📍 URL after navigation: ${ss}`);
+    console.log(`📍 URL before navigation: ${ss}`);
+    const cn = await page.content();
+     console.log('📄 Page content before navigation:', cn)
     await page.goto("https://www.naukri.com/", {
       waitUntil: "domcontentloaded",
       timeout: 60000
