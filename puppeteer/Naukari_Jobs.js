@@ -253,6 +253,13 @@ export const start_scraping_naukari_jobs = async (data) => {
       waitUntil: "domcontentloaded",
       timeout: 60000
     });
+     // === NEW DEBUGGING: Check page after navigation ===
+     console.log('🔍 Navigation completed, checking page state...');
+     const urlAfterNav = page.url();
+     console.log(`📍 URL after navigation: ${urlAfterNav}`);
+     
+     const contentAfterNav = await page.content();
+     console.log('📄 Page content after navigation:', contentAfterNav);
     
     // Verify session is still valid
     const sessionValid = await checkSessionDuringProcess(page);
