@@ -3,7 +3,7 @@ import { SendMail } from "../controller/Controller.js";
 import { dbchecker } from "../controller/jobchecker.js";
 import { internshala_scraper } from "../puppeteer/internshalla_job.js";
 
-cron.schedule("*/1 * * * *", async () => {
+cron.schedule("*/10 * * * *", async () => {
 //   SendMail()
     // console.log("Checking the db to send emails");
     try {
