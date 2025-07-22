@@ -33,7 +33,7 @@ async function initializeBrowser() {
   return browserInstance;
 }
 
-const start_internshala_jobs = async () => {
+const start_internshala_jobs = async (data) => {
     let browser = null;
     let page = null;
     try {
@@ -59,8 +59,157 @@ const start_internshala_jobs = async () => {
     
         console.log('=== STARTING Internshala JOB SCRAPING ===');
 
-        await page.goto("https://internshala.com/jobs/full-stack-development-jobs/", {
-            waitUntil: "networkidle2",
+        // getting the job title and then converting to lowercase also in the form of url
+
+        let jobtitle = [];
+
+        for (let i = 0; i < data.jobtitle.length; i++) {
+            if (data.jobtitle[i] == "Frontend Developer") {
+                jobtitle.push("frontend-development");
+            } else if (data.jobtitle[i] == "Backend Developer") {
+                jobtitle.push("backend-development");
+            } else if (data.jobtitle[i] == "Full Stack Developer") {
+                jobtitle.push("full-stack-development");
+            } else if (data.jobtitle[i] == "React Developer") {
+                jobtitle.push("javascript-development");
+            } else if (data.jobtitle[i] == "Node.js Developer") {
+                jobtitle.push("node-js-development");
+            } else if (data.jobtitle[i] == "Software Engineer") {
+                jobtitle.push("software-development");
+            } else if (data.jobtitle[i] == "Web Developer") {
+                jobtitle.push("web-development");
+            } else if (data.jobtitle[i] == "UI/UX Designer") {
+                jobtitle.push("ui-ux-design");
+            } else if (data.jobtitle[i] == "Data Analyst") {
+                jobtitle.push("analytics");
+            } else if (data.jobtitle[i] == "Data Scientist") {
+                jobtitle.push("data-science");
+            } else if (data.jobtitle[i] == "Machine Learning Engineer") {
+                jobtitle.push("machine-learning");
+            } else if (data.jobtitle[i] == "Android Developer") {
+                jobtitle.push("android-app-development");
+            } else if (data.jobtitle[i] == "iOS Developer") {
+                jobtitle.push("ios-app-development");
+            } else if (data.jobtitle[i] == "DevOps Engineer") {
+                jobtitle.push("mlops-engineering");
+            } else if (data.jobtitle[i] == "QA Engineer") {
+                jobtitle.push("quality-analyst");
+            } else if (data.jobtitle[i] == "Manual Tester") {
+                jobtitle.push("software-testing");
+            } else if (data.jobtitle[i] == "Automation Tester") {
+                jobtitle.push("software-testing");
+            } else if (data.jobtitle[i] == "Python Developer") {
+                jobtitle.push("python-django-development");
+            } else if (data.jobtitle[i] == "Java Developer") {
+                jobtitle.push("java-development");
+            } else if (data.jobtitle[i] == "C++ Developer") {
+                jobtitle.push("programming");
+            } else if (data.jobtitle[i] == "Flutter Developer") {
+                jobtitle.push("flutter-development");
+            } else if (data.jobtitle[i] == "Cloud Engineer") {
+                jobtitle.push("cloud-computing");
+            } else if (data.jobtitle[i] == "Cybersecurity Analyst") {
+                jobtitle.push("cyber-security");
+            } else if (data.jobtitle[i] == "Database Administrator") {
+                jobtitle.push("database-building");
+            } else if (data.jobtitle[i] == "Game Developer") {
+                jobtitle.push("game-development");
+            } else if (data.jobtitle[i] == "Blockchain Developer") {
+                jobtitle.push("blockchain-development");
+            } else if (data.jobtitle[i] == "Technical Support Engineer") {
+                jobtitle.push("customer-service");
+            } else if (data.jobtitle[i] == "Business Analyst") {
+                jobtitle.push("market-business-research");
+            } else if (data.jobtitle[i] == "Product Manager") {
+                jobtitle.push("product-management");
+            } else if (data.jobtitle[i] == "Digital Marketing Executive") {
+                jobtitle.push("digital-marketing");
+            } else if (data.jobtitle[i] == "Content Writer") {
+                jobtitle.push("content-writing");
+            } else if (data.jobtitle[i] == "Graphic Designer") {
+                jobtitle.push("graphic-design");
+            }
+        }
+        
+        
+        // Construct the URL based on job titles
+        let jobtitle_url = ""
+        if(data.jobtype=="Internship"){
+            jobtitle_url=jobtitle.slice(0, 3).join(",") + "-internship";
+        }else{
+            jobtitle_url=jobtitle.slice(0, 3).join(",") + "-jobs";
+        }
+        console.log(`Job title URL: ${jobtitle_url}`);
+        // getting the location and then converting to lowercase also in the form of url
+
+        let location = [];
+
+        for (let i = 0; i < data.joblocation.length; i++) {
+            //converting to lowercase
+            if(data.joblocation[i] != "Remote" ){
+                let low_loc = data.joblocation[i].toLowerCase();
+                location.push(low_loc);
+            }
+        }
+
+        // Construct the URL based on locations
+        let location_url = location.join(",");
+
+    
+        let exp_url = ""
+
+        if(data.exp == "Fresher"){
+            exp_url = "fresher"
+        }else{
+            exp_url = `experience-${data.exp[0]}`
+        }
+
+        let url =""
+        if(data.jobtype == "Internship"){
+            
+            if(data.joblocation.includes("Remote") && data.joblocation.length>1  ){
+                url =  `https://internshala.com/internships/${jobtitle_url}-in-${location_url}/`
+            }
+            else if(data.joblocation.includes("Remote") && data.joblocation.length==1 && data.exp=="Fresher" ){
+                url =  `https://internshala.com/internships/${jobtitle_url}/work-from-home/`
+            }
+            else if(!data.joblocation.includes("Remote") && data.joblocation.length>=1 && data.exp=="Fresher" ){
+                url =  `https://internshala.com/internships/${jobtitle_url}-in-${location_url}/`
+            }
+            else if(data.joblocation.includes("Remote") && data.joblocation.length>1){
+                url =  `https://internshala.com/internships/${jobtitle_url}-in-${location_url}/work-from-home/`
+            }
+            else if(data.joblocation.includes("Remote") && data.joblocation.length==1){
+                url =  `https://internshala.com/internships/${jobtitle_url}/work-from-home/`
+            }
+            else if(!data.joblocation.includes("Remote") && data.joblocation.length>=1){
+                url =  `https://internshala.com/internships/${jobtitle_url}-in-${location_url}/`
+            }
+        }
+        else{
+                    if(data.joblocation.includes("Remote") && data.joblocation.length>1 && data.exp=="Fresher" ){
+                        url =  `https://internshala.com/fresher-jobs/${jobtitle_url}-in-${location_url}/work-from-home/`
+                    }
+                    else if(data.joblocation.includes("Remote") && data.joblocation.length==1 && data.exp=="Fresher" ){
+                        url =  `https://internshala.com/fresher-jobs/${jobtitle_url}/work-from-home/`
+                    }
+                    else if(!data.joblocation.includes("Remote") && data.joblocation.length>=1 && data.exp=="Fresher" ){
+                        url =  `https://internshala.com/fresher-jobs/${jobtitle_url}-in-${location_url}/`
+                    }
+                    else if(data.joblocation.includes("Remote") && data.joblocation.length>1){
+                        url =  `https://internshala.com/jobs/${jobtitle_url}-in-${location_url}/work-from-home/${exp_url}`
+                    }
+                    else if(data.joblocation.includes("Remote") && data.joblocation.length==1){
+                        url =  `https://internshala.com/jobs/${jobtitle_url}/work-from-home/${exp_url}`
+                    }
+                    else if(!data.joblocation.includes("Remote") && data.joblocation.length>=1){
+                        url =  `https://internshala.com/jobs/${jobtitle_url}-in-${location_url}/${exp_url}`
+                    }
+        }
+        console.log(url)
+
+        await page.goto(url, {
+            waitUntil: "domcontentloaded",
             timeout: 60000
         });
 
@@ -283,9 +432,9 @@ const start_internshala_jobs = async () => {
         
         if (jobData.length > 0) {
             // selevting only first 5 jobs for detailed logging and saving new variable
-            const sampleJobs = jobData.slice(0, 5);
-            console.log('Sample jobs data:', sampleJobs);
-            SendMail(sampleJobs);
+            let job_number = parseInt(data.jobnumber)
+            const sampleJobs = jobData.slice(0, job_number);
+            SendMail(sampleJobs,data);
         } else {
             console.log('No jobs were extracted. Check debug info above.');
         }
@@ -309,11 +458,10 @@ const start_internshala_jobs = async () => {
     }
 }
 
-export const internshala_scraper = async () => {
+export const internshala_scraper = async (data) => {
   console.log("🚀 Starting internshala job scraping...");
-  
   try {
-    const result = await start_internshala_jobs();
+    const result = await start_internshala_jobs(data);
     console.log(`✅ Scraping completed successfully. Found ${result.length} jobs.`);
     return result;
   } catch (error) {
@@ -321,3 +469,10 @@ export const internshala_scraper = async () => {
     return [];
   }
 };
+
+
+//internshall
+//foundit
+//shine
+//unnstop
+//naukari

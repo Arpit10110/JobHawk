@@ -31,7 +31,7 @@ export const dbchecker = async () => {
         if (form24hr <= currentHour) {
           console.log(`Scraping job form: for jobId-${i._id} at ${currentHour}:${currentMinute} ${i.ampm}`);
           // await naukar_scraper(i);
-          await internshala_scraper()
+          await internshala_scraper(i)
           i.lastSentAt = new Date();
           await i.save();
         }else{
