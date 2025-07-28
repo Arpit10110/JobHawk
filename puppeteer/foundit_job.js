@@ -1,6 +1,6 @@
 import puppeteer from "puppeteer";
 import { SendMail } from "../controller/Controller.js";
-
+import axios from "axios"
 let browserInstance = null;
 const isProd = process.env.NODE_ENV == 'production';
 
@@ -63,19 +63,45 @@ const start_internshala_jobs = async () => {
         // get the jobtitle input
         let jobtitle_inputbox  = await page.waitForSelector("input[id='heroSectionDesktop-skillsAutoComplete--input']");
         await jobtitle_inputbox.type("frontend,backend,fullstack",{delay:100})
-        // get the location input
-        let loc_inputbox = await page.waitForSelector("input[id='heroSectionDesktop-locationAutoComplete--input']")
-        await loc_inputbox.type("Delhi,banglore",{delay:100})
         //get the exp dropdown
+        await page.click('input[placeholder="Experience"]');
+        let years="5 Years"
+    
+        // Wait for options to load
+        await page.waitForSelector('ul li', { timeout: 5000 });
         
-
-
+        // Get all dropdown options
+        const options = await page.$$('ul li');
+        
+        for (let option of options) {
+            const text = await page.evaluate(el => el.textContent, option);
+            if (text.includes(years)) {
+                await option.click();
+                break;
+            }
+        }
+        await page.waitForTimeout(3000);
+         // get the location input
+         let loc_inputbox = await page.waitForSelector("input[id='heroSectionDesktop-locationAutoComplete--input']")
+         await loc_inputbox.type("Delhi,banglore",{delay:100})
         await page.keyboard.press('Enter', { delay: 100 });
-
+       // Wait until the page and its document are fully loaded
+        await page.waitForNavigation({ waitUntil: 'networkidle0' });
+        await page.waitForTimeout(3000);
 
     }catch(error){
         console.log(error)
     }
 }
 
-start_internshala_jobs()
+const getthejob_using_api = async()=>{
+  try {
+      const res = await axios.get("https://www.foundit.in/home/api/searchResultsPage?start=0&limit=5&query=frontend+internship&query=backend&query=fullstack+developer&jobCities=bengaluru+%2F+&jobCities=delhi&experienceRanges=3~3&experience=3")
+      console.log(res.data)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+// start_internshala_jobs()
+getthejob_using_api()
