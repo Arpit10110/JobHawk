@@ -94,14 +94,72 @@ const start_internshala_jobs = async () => {
     }
 }
 
-const getthejob_using_api = async()=>{
+const getthejob_using_api = async(data)=>{
   try {
-      const res = await axios.get("https://www.foundit.in/home/api/searchResultsPage?start=0&limit=5&query=frontend+internship&query=backend&query=fullstack+developer&jobCities=bengaluru+%2F+&jobCities=delhi&experienceRanges=3~3&experience=3")
-      console.log(res.data)
+    console.log("----Starting FoundIT job Scraping----")
+      let job_query = "";
+
+      for(let i=0;i<data.jobtitle.length;i++){
+        // convert the jobtitles in small letter and if their is space between two word join it using + like Frontend Developer = frontend+developer
+        const formattedJobTitle = data.jobtitle[i].toLowerCase().replace(/\s+/g, "+");
+        job_query += `&query=${formattedJobTitle}`;
+      }
+
+      let job_cities = "";
+      let job_loc=""
+      for(let i=0;i<data.joblocation.length;i++){
+        const formattedJobLoc = data.joblocation[i].toLowerCase().replace(/\s+/g, "%2F");
+        job_cities += `&jobCities=${formattedJobLoc}`
+        job_loc +=`&locations=${formattedJobLoc}`
+      }
+
+      let job_exp =""
+      if(data.exp == "Fresher"){
+        job_exp+=`&experienceRanges=0~0&experience=0`
+      }else{
+        job_exp+=`&experienceRanges=${data.exp[0]}~${data.exp[0]}&experience=${data.exp[0]}`
+      }
+
+
+      // const res = await axios.get("https://www.foundit.in/home/api/searchResultsPage?start=0&limit=5&query=frontend+internship&query=backend&query=fullstack+developer&jobCities=bengaluru+%2F+&jobCities=delhi&experienceRanges=3~3&experience=3")
+
+      let url = `https://www.foundit.in/home/api/searchResultsPage?start=0&limit=10${job_query}${job_cities}${job_loc}${job_exp}`
+      // console.log(url)
+      const res = await axios.get(url)
+      let job_data = await res.data.data;
+
+      let filter_jobdata = [];
+      let job_number= parseInt(data.jobnumber)
+      if(job_data.length == 0 || job_data.length < job_number ){
+        console.log("no jobs found");
+      }else{
+        
+        job_data.forEach((e,index)=>{
+          let link=`https://www.foundit.in/job/${e.jobId}`
+          let title=e.cleanedJobTitle;
+          let companyName=e.company.name
+          let filter_loc = e.locations.map(loc_e => loc_e?.city).filter(Boolean).join(" ");
+          let dd={
+            link:link,
+            title:title,
+            companyName:companyName,
+            location:filter_loc
+          }
+          filter_jobdata.push(dd)
+        })
+        const sampleJobs = filter_jobdata.slice(0, job_number);
+        console.log("----Ending FoundIT job Scraping----")
+        await SendMail(sampleJobs,data)
+      }
+
   } catch (error) {
     console.log(error)
   }
 }
 
 // start_internshala_jobs()
-getthejob_using_api()
+
+export const get_foundit_jobs = async(data)=>{
+  console.log(data)
+  getthejob_using_api(data)
+}
