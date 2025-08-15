@@ -49,11 +49,15 @@ const JobFormSchema = new mongoose.Schema({
     type: String,
     default: "active"
   },
+  userid:{
+    type:String,
+    required:true
+  },
   plantype: {
     type: String,
     default: "free"
 } 
 });
 
-const JobForm = mongoose.models.JobForm || mongoose.model("JobForm", JobFormSchema);
+const JobForm =mongoose.model("JobForm", JobFormSchema);
 export default JobForm;
