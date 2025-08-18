@@ -12,7 +12,8 @@ export const submitjobform = async (req, res) => {
       selectNumberofJobs,
       selectJobType,
       status,
-      plantype
+      plantype,
+      userid
     } = req.body;
 
     const jobcretaedat = new Date();
