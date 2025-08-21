@@ -1,6 +1,4 @@
 import express from 'express';
-import { SendMail } from '../controller/Controller.js';
-import { submitjobform } from '../controller/jobform.js';
 
 const router = express.Router();
 
@@ -11,9 +9,5 @@ router.get('/', (req, res) => {
     });
 });
 
-router.get('/send-email', SendMail)
-
-// routes to create a job form
-router.post('/createjobform',submitjobform)
 
 export default router;

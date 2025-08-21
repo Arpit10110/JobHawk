@@ -1,6 +1,5 @@
 import puppeteer from "puppeteer";
 import { SendMail } from "../controller/Controller.js";
-
 let browserInstance = null;
 const isProd = process.env.NODE_ENV == 'production';
 
@@ -434,25 +433,29 @@ const start_internshala_jobs = async (data) => {
             // selevting only first 5 jobs for detailed logging and saving new variable
             let job_number = parseInt(data.jobnumber)
             const sampleJobs = jobData.slice(0, job_number);
-            SendMail(sampleJobs,data);
+            // SendMail(sampleJobs,data);
+            console.log(sampleJobs)
+            return {success:true}
         } else {
             console.log('No jobs were extracted. Check debug info above.');
+        return {success:false}
         }
         
         return jobData;
 
     } catch (error) {
         console.error('Error during scraping:', error);
-        return [];
+        return {success:false}
     } finally {
         // Always close the page properly
         if (page) {
             try {
-                await page.close();
-                await browser.close();
+                // await page.close();
+                // await browser.close();
                 console.log('Page closed successfully');
             } catch (closeError) {
                 console.log('Error closing page:', closeError);
+
             }
         }
     }
@@ -462,11 +465,10 @@ export const internshala_scraper = async (data) => {
   console.log("🚀 Starting internshala job scraping...");
   try {
     const result = await start_internshala_jobs(data);
-    console.log(`✅ Scraping completed successfully. Found ${result.length} jobs.`);
     return result;
   } catch (error) {
     console.error('❌ Error in internshala_scraper:', error);
-    return [];
+    return {success:false}
   }
 };
 
@@ -476,3 +478,8 @@ export const internshala_scraper = async (data) => {
 //shine
 //unnstop
 //naukari
+
+
+
+
+

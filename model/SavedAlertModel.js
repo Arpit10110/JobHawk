@@ -33,11 +33,15 @@ const JobFormSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  createdAt: {
+  jobportal: {
+    type: String,
+    required: true
+  },
+  planstartdate: {
     type: Date,
     default: Date.now
   },
-  expiryDate: {
+  planexpiryDate: {
     type:Date,
     required: true
   },
@@ -49,15 +53,22 @@ const JobFormSchema = new mongoose.Schema({
     type: String,
     default: "active"
   },
-  userid:{
-    type:String,
-    required:true
-  },
   plantype: {
     type: String,
     default: "free"
-} 
+} ,
+  user_id:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true
+  },
+  plan_id:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Plan",
+    required: true
+  }
 });
 
-const JobForm =mongoose.model("JobForm", JobFormSchema);
-export default JobForm;
+
+export const SavedAlertModel = mongoose.models.SavedAlert || mongoose.model("SavedAlert", JobFormSchema);
+

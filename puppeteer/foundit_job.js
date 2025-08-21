@@ -114,7 +114,7 @@ const getthejob_using_api = async(data)=>{
       }
 
       let job_exp =""
-      if(data.exp == "Fresher"){
+      if(data.exp == "Fresher" || data.jobtype == "Internship" ){
         job_exp+=`&experienceRanges=0~0&experience=0`
       }else{
         job_exp+=`&experienceRanges=${data.exp[0]}~${data.exp[0]}&experience=${data.exp[0]}`
@@ -124,7 +124,7 @@ const getthejob_using_api = async(data)=>{
       // const res = await axios.get("https://www.foundit.in/home/api/searchResultsPage?start=0&limit=5&query=frontend+internship&query=backend&query=fullstack+developer&jobCities=bengaluru+%2F+&jobCities=delhi&experienceRanges=3~3&experience=3")
 
       let url = `https://www.foundit.in/home/api/searchResultsPage?start=0&limit=10${job_query}${job_cities}${job_loc}${job_exp}`
-      // console.log(url)
+      console.log(url)
       const res = await axios.get(url)
       let job_data = await res.data.data;
 
@@ -149,11 +149,14 @@ const getthejob_using_api = async(data)=>{
         })
         const sampleJobs = filter_jobdata.slice(0, job_number);
         console.log("----Ending FoundIT job Scraping----")
+        console.log(sampleJobs)
         await SendMail(sampleJobs,data)
+        return {success:true}
       }
 
   } catch (error) {
     console.log(error)
+    return {success:false}
   }
 }
 
@@ -161,5 +164,6 @@ const getthejob_using_api = async(data)=>{
 
 export const get_foundit_jobs = async(data)=>{
   console.log(data)
-  getthejob_using_api(data)
+  const result = await getthejob_using_api(data)
+  return result
 }

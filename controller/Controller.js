@@ -37,7 +37,7 @@ import nodemailer from "nodemailer";
 // ];
 
 // Function to generate the HTML content for the email
-const generateEmailHtml = (jobData) => {
+const generateEmailHtml = (jobData,jobportal) => {
   const jobListingsHtml = jobData
     .map(
       (job) => `
@@ -122,7 +122,7 @@ const generateEmailHtml = (jobData) => {
     <body>
       <div class="container">
         <div class="header">
-          <h1>Your Latest Job Alerts 🚀</h1>
+          <h3>Your Latest Job Alerts from ${jobportal} 🚀</h3>
           <p>${jobData.length} new ${jobData.length === 1 ? 'job' : 'jobs'} picked for you</p>
         </div>
 
@@ -166,7 +166,7 @@ export const SendMail = async (jobdata,data) => {
         pass: process.env.Email_password, // Your App Password
       },
     });
-    const emailHtml = generateEmailHtml(jobdata); // Generate HTML with your job data
+    const emailHtml = generateEmailHtml(jobdata,data.jobportal); // Generate HTML with your job data
 
     const info = await transporter.sendMail({
       from: 'omagrahari55@gmail.com',
