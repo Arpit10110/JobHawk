@@ -64,10 +64,9 @@ const get_jobs = async (data)=>{
     }
 }
 
+
 const generate_url = async (data)=>{
     // const url = https://www.naukri.com/jobapi/v3/search?noOfResults=20&urlType=search_by_key_loc&searchType=adv&location=delhi%2C%20banglore&keyword=frontend%20developer%20intern%2C%20backend%20developer%20intern&sort=f&pageNo=1
-
-    console.log(data)
     //get jobstitle
     let jobs_title ="";
     if(data.jobtype=="Full-time"){
@@ -124,5 +123,3 @@ export const get_naukarijob = async (data)=>{
     }
 
 }
-
-get_naukarijob()
