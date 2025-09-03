@@ -49,9 +49,12 @@ const get_jobs = async (data)=>{
             location:location
             })
         })
-        const sampleJobs = filter_jobdata.slice(0, job_length);
-        console.log(sampleJobs)
-        await SendMail(sampleJobs,data)
+         if(job_length>filter_jobdata.length){
+            SendMail(filter_jobdata,data);
+            }else{
+                const sampleJobs = filter_jobdata.slice(0, job_length);
+                await SendMail(sampleJobs,data)
+            }
         return {success:true}
      }else{
         console.log("no jobs found");

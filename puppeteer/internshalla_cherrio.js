@@ -234,18 +234,16 @@ import { SendMail } from "../controller/Controller.js";
          }
          console.log(url)
         const result = await usingcherrio(url);
+        let job_number = parseInt(data.jobnumber)
         if(result.success){
             const jobData =  result.jobs;
-            if (jobData.length > 0) {
-                // selevting only first 5 jobs for detailed logging and saving new variable
-                let job_number = parseInt(data.jobnumber)
-                const sampleJobs = jobData.slice(0, job_number);
-                SendMail(sampleJobs,data);
+             if(job_number>jobData.length){
+                SendMail(jobData,data);
+                }else{
+                    const sampleJobs = jobData.slice(0, job_number);
+                    SendMail(sampleJobs,data);
+                }
                 return {success:true}
-            } else {
-                console.log('No jobs were extracted. Check debug info above.');
-                 return {success:false}
-            }
         }else{
             return {success:false}
         }

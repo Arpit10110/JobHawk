@@ -147,10 +147,13 @@ const getthejob_using_api = async(data)=>{
           }
           filter_jobdata.push(dd)
         })
-        const sampleJobs = filter_jobdata.slice(0, job_number);
+        if(job_number>filter_jobdata.length){
+          SendMail(filter_jobdata,data);
+          }else{
+            const sampleJobs = filter_jobdata.slice(0, job_number);
+          await SendMail(sampleJobs,data)
+          }
         console.log("----Ending FoundIT job Scraping----")
-        console.log(sampleJobs)
-        await SendMail(sampleJobs,data)
         return {success:true}
       }
 
