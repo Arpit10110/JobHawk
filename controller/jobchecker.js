@@ -7,6 +7,7 @@ import { get_instahyre_jobs } from "../puppeteer/instahyre_job.js";
 import { internshala_scraper } from "../puppeteer/internshalla_job.js";
 import { internshala_scraper_cherrio } from "../puppeteer/internshalla_cherrio.js";
 import { get_naukarijob } from "../puppeteer/Naukarijob_Api.js";
+import { getlinkedin_jobs } from "../puppeteer/Linkedin_job.js";
 
 export const dbchecker = async () => {
   try {
@@ -70,19 +71,18 @@ export const dbchecker = async () => {
             }
           }
           if(i.jobportal=="Naukari.com"){
+            console.log("Naukari")
             const result =await get_naukarijob(i)
             if(result.success){
               await SavedAlertModel.updateOne({_id:i._id},{$set:{lastSentAt:new Date()}})
             }
           }
-          // if(i.jobportal=="LinkedIn.com"){
-          //   await linkedin_scraper(i)
-          //   const result =await Foundit_scraper(i)
-          //   if(result.success){
-          //     await SavedAlertModel.updateOne({_id:i._id},{$set:{lastSentAt:new Date()}})
-          //   }
-          // }
-        
+          if(i.jobportal=="LinkedIn.com"){
+            const result =await getlinkedin_jobs(i);
+            if(result.success){
+              await SavedAlertModel.updateOne({_id:i._id},{$set:{lastSentAt:new Date()}})
+            }
+          }
         }else{
           console.log(`Skipping job form: ${i._id} as it is scheduled for a later time.`);
         }

@@ -123,7 +123,7 @@ const generateEmailHtml = (jobData,jobportal) => {
       <div class="container">
         <div class="header">
           <h3>Your Latest Job Alerts from ${jobportal} 🚀</h3>
-          <p>${jobData.length} new ${jobData.length === 1 ? 'job' : 'jobs'} picked for you</p>
+          <p>Latest Jobs picked for you</p>
         </div>
 
         <div class="content">
